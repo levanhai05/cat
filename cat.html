@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Mèo ở đây nè 🐱</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', Tahoma, sans-serif;
+}
+body{
+    height:100vh;
+    background:linear-gradient(135deg,#fdf1f4,#eef6ff);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* LOGIN */
+.login{
+    background:white;
+    padding:30px;
+    border-radius:26px;
+    width:90%;
+    max-width:360px;
+    text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,0.12);
+}
+.login h1{
+    font-size:22px;
+    margin-bottom:10px;
+}
+.login p{
+    font-size:14px;
+    color:#777;
+    margin-bottom:18px;
+}
+.login input{
+    width:100%;
+    padding:12px;
+    border-radius:20px;
+    border:1px solid #ddd;
+    outline:none;
+    font-size:14px;
+    margin-bottom:15px;
+}
+.login button{
+    padding:10px 22px;
+    border:none;
+    border-radius:20px;
+    background:#ff9fc7;
+    color:white;
+    font-size:14px;
+    cursor:pointer;
+}
+
+/* MAIN */
+.container{
+    display:none;
+    background:white;
+    padding:28px;
+    border-radius:26px;
+    max-width:380px;
+    width:90%;
+    text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,0.12);
+}
+.cat-box img{
+    width:100%;
+    border-radius:22px;
+    transition:0.4s ease;
+}
+.cat-soft{
+    animation:soft 0.5s ease;
+}
+@keyframes soft{
+    0%{transform:scale(1)}
+    40%{transform:scale(1.04)}
+    100%{transform:scale(1)}
+}
+.message{
+    margin-top:14px;
+    min-height:52px;
+    font-size:16px;
+    color:#444;
+}
+.controls{
+    margin-top:15px;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+}
+button{
+    padding:10px 18px;
+    border:none;
+    border-radius:20px;
+    background:#ff9fc7;
+    color:white;
+    font-size:13px;
+    cursor:pointer;
+}
+footer{
+    margin-top:18px;
+    font-size:12px;
+    color:#aaa;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="login" id="loginBox">
+    <h1>🐾 Trước khi gặp mèo</h1>
+    <p>Cho mèo biết tên em nha</p>
+    <input id="nameInput" placeholder="Tên người được thương…">
+    <button onclick="login()">Gặp mèo nè</button>
+</div>
+
+<!-- MAIN -->
+<div class="container" id="mainBox">
+    <h1>🐱 Mèo ở đây nè</h1>
+    <p style="font-size:14px;color:#777">Không cần nói gì, bấm mèo chút thôi</p>
+
+    <div class="cat-box" onclick="meoNoi()">
+        <img id="catImg" src="https://api.thecatapi.com/v1/images/search?format=src">
+    </div>
+
+    <div class="message" id="message">Mèo đang nhìn em…</div>
+
+    <div class="controls">
+        <button onclick="meoNoi()">Bấm mèo nữa</button>
+        <button onclick="toggleMusic()">🎵 Nhạc</button>
+    </div>
+
+    <footer>🌷 Có người thương em theo cách rất im lặng</footer>
+</div>
+
+<audio id="music" loop>
+    <source src="chill.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+let tenEm = "";
+let musicOn = false;
+
+const messagesTemplate = [
+(n)=>`${n} nè, mèo ở đây rồi`,
+(n)=>`Mèo không biết chuyện gì xảy ra, nhưng mèo không đi đâu hết`,
+(n)=>`Nếu hôm nay mệt, ${n} cho phép mình mệt nha`,
+(n)=>`Không cần phải ổn liền đâu`,
+(n)=>`Mèo ngồi đây với ${n} một chút nè`,
+(n)=>`Có những ngày chỉ cần thở thôi cũng đủ rồi`,
+(n)=>`${n} không hề phiền khi buồn`,
+(n)=>`Buồn không làm ${n} xấu đi đâu`,
+(n)=>`Mèo thấy ${n} dịu lắm`,
+(n)=>`Nếu không muốn nói, mình im lặng cùng nhau cũng được`,
+(n)=>`Mèo thích cách ${n} tồn tại`,
+(n)=>`Hôm nay không vui cũng không sao`,
+(n)=>`${n} không cần cố gắng làm ai hài lòng cả`,
+(n)=>`Có những cảm xúc chỉ cần được ở yên`,
+(n)=>`Mèo tin ${n} đã cố gắng nhiều rồi`,
+(n)=>`Nếu muốn khóc, mèo không cười đâu`,
+(n)=>`Mèo không hỏi tại sao`,
+(n)=>`Mèo chỉ ở đây`,
+(n)=>`${n} không một mình đâu`,
+(n)=>`Có người đang nghĩ về ${n} theo cách rất nhẹ`,
+(n)=>`Không cần trả lời ai hết`,
+(n)=>`Chỉ cần ở đây một chút`,
+(n)=>`Mèo thấy ${n} đáng được thương`,
+(n)=>`Buồn không phải là yếu`,
+(n)=>`Mèo không giỏi nói, nhưng thương thì có`,
+(n)=>`${n} nghỉ ngơi xíu nha`,
+(n)=>`Ngày mai tính sau cũng được`,
+(n)=>`Có những ngày chậm lại là đúng`,
+(n)=>`Mèo không hối`,
+(n)=>`Mèo đợi`,
+(n)=>`Mèo ở đây rồi`,
+(n)=>`${n} không cần mạnh mẽ hôm nay`,
+(n)=>`Thở sâu một cái nè`,
+(n)=>`Mèo nghe tim ${n} mệt đó`,
+(n)=>`Không sao đâu`,
+(n)=>`Thật sự không sao đâu`,
+(n)=>`Mèo vẫn ở đây`,
+(n)=>`Vậy là đủ rồi`
+];
+
+
+function login(){
+    const name = document.getElementById("nameInput").value.trim();
+    if(!name) return;
+    tenEm = name;
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("mainBox").style.display="block";
+    meoNoi();
+}
+
+function meoNoi(){
+    const msgFunc = messagesTemplate[Math.floor(Math.random()*messagesTemplate.length)];
+    document.getElementById("message").innerText = msgFunc(tenEm);
+
+    const cat = document.getElementById("catImg");
+    cat.src = "https://api.thecatapi.com/v1/images/search?format=src&random=" + Math.random();
+    cat.classList.remove("cat-soft");
+    void cat.offsetWidth;
+    cat.classList.add("cat-soft");
+}
+
+function toggleMusic(){
+    const music = document.getElementById("music");
+    musicOn ? music.pause() : music.play();
+    musicOn = !musicOn;
+}
+</script>
+
+</body>
+</html>
