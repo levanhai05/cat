@@ -190,9 +190,16 @@ const messagesTemplate = [
 ];
 
 
+
 function login(){
     const name = document.getElementById("nameInput").value.trim();
-    if(!name) return;
+
+    // Bắt buộc đúng tên
+    if(name !== "An"){
+        alert('Nhập vợ "An" á vợ tui ơi 😤💗 Không ai ngoài bé cả');
+        return;
+    }
+
     tenEm = name;
     document.getElementById("loginBox").style.display="none";
     document.getElementById("mainBox").style.display="block";
